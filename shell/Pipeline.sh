@@ -95,7 +95,7 @@ gunzip -c dest.all.PoolSNP.001.50.10Nov2020.ann.vcf.gz \
   | awk '{print $1"\t"$2-1"\t"$2}' \
   > dest.all.PoolSNP.bed
 
-## 5) synchronice BAM files and isolate SNP positions based on BED file
+## 5) synchronice BAM files and isolate SNP positions based on BED file - use with caution as this is designed for Pool-Seq data (See below). Moreover, the python scripts have been lifted to Python3 just now, but I di not test them yet. Please let me know if there are any errors.
 
 # a) make list of BAM files
 
@@ -107,9 +107,26 @@ do
 
 done
 
-# b) synchronize BAM file and convert to VCF file
+# b) synchronize BAM file and convert to SYNC file
 
 samtools mpileup \
   -B \
   -f data/holo_dmel6.12.fa.gz \
-  -b bamlist.txt
+  -b bamlist.txt \
+  -l dest.all.PoolSNP.bed \
+  | python3 scripts/mpileup2sync.py \
+  --mpileup - \
+  | gzip > SNPs.sync.gz
+
+# convert to VCF file
+
+python3 scripts/sync2vcf.py \
+  --reference data/holo_dmel6.12.fa.gz \
+  --source DEST_freeze1 \
+  --names sample1,sample2,sample3,sample4 \
+  --input SNPs.sync.gz \
+  --output SNPs.vcf.gz \
+  --biallelic
+
+
+### ALTERNATIVELY, I WOULD STRONGLY RECOMMEND TO FOLLOW THE GATK BEST PRACTICE SNP CALLING TUTORIAL SINCE MY PIPELINE IS MERELY DESIGNED FOR POOLSEQ RATHER THAN SINGLE INDIVIDUAL SEQUENCING DATA -- see here: https://gatk.broadinstitute.org/hc/en-us/articles/360035894731-Somatic-short-variant-discovery-SNVs-Indels-####
