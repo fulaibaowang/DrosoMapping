@@ -41,5 +41,10 @@ curl -L https://github.com/lh3/minimap2/releases/download/v2.17/minimap2-2.17_x6
 
 # b) index reference
 
+minimap2-2.17_x64-linux/minimap2 index data/holo_dmel6.12.fa.gz
 
-minimap2-2.17_x64-linux/
+# c) map all samples against reference
+
+for i in sample1 sample2 sample3 sample4
+
+do
