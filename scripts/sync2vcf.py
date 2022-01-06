@@ -101,8 +101,9 @@ for l in load_data(options.input):
     if len(totalleles) == 0:
         continue
     if options.biallelic:
-        alt = list(
-            zip(*sorted(totalleles.items(), key=itemgetter(1), reverse=True)))[0][0]
+        alt = list(zip(*sorted(totalleles.items(), key=itemgetter(1), reverse=True)))[
+            0
+        ][0]
     else:
         alt = sorted(set(tot))
     counts = []
