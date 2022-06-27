@@ -36,6 +36,7 @@ do
 done
 
 ### 2) mapping with minimap
+ALTERNATIVELY, use bbmap because minimap is designed for long reads.
 
 # a) download precompiled minimap2 binary
 
