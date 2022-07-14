@@ -15,6 +15,15 @@ for i in $(seq 0 $(($n-1))); do echo -e '#!/bin/bash\n#SBATCH --nodes=1\n#SBATCH
 date\ncd /pfs/work7/workspace/scratch/fr_yw1014-minaproject/raw_flyreads\n ~/fr_yw50/downloads/bowtie2-2.4.2-linux-x86_64/bowtie2 --threads 16 -x ../holodmel -1 '${listA[$i]}' -2 '${listB[$i]}' -S ../mapping_on_fly/Sample_'${listA[$i]}'.sam\ndate'  >  ${listA[$i]}.sh1; done
 
 # in each file, it look something like this
+#!/bin/bash
+#SBATCH --nodes=1
+#SBATCH --cpus-per-task=16
+#SBATCH --time=0:59:59
+#SBATCH --output=bowtie_out_DE3035_1.fastq.gz.txt
+date
+cd /pfs/work7/workspace/scratch/fr_yw1014-minaproject/raw_flyreads
+ ~/fr_yw50/downloads/bowtie2-2.4.2-linux-x86_64/bowtie2 --threads 16 -x ../holodmel -1 DE3035_1.fastq.gz -2 DE3035_2.fastq.gz -S ../mapping_on_fly/Sample_DE3035_1.fastq.gz.sam
+date
 
 
 # submit the sh1 files in cluster
