@@ -1,8 +1,9 @@
-## mapping with bowtie
+## 1 mapping with bowtie
 
-# use bowtie2-build to generate the genome database
+# 1.1 use bowtie2-build to generate the genome database
 ~/fr_yw50/downloads/bowtie2-2.4.2-linux-x86_64/bowtie2-build DrosoMapping/data/holo_dmel_6.12.fa.gz ./holodmel
 
+# 1.2 do bowtie2 mapping for each sample in a parallel fashion
 # in cluster, generate a .sh1 file for each sample by these commands:
 
 cd raw_flyreads/
@@ -26,11 +27,11 @@ cd /pfs/work7/workspace/scratch/fr_yw1014-minaproject/raw_flyreads
  ~/fr_yw50/downloads/bowtie2-2.4.2-linux-x86_64/bowtie2 --threads 16 -x ../holodmel -1 DE3035_1.fastq.gz -2 DE3035_2.fastq.gz -S ../mapping_on_fly/Sample_DE3035_1.fastq.gz.sam
 date
 
-
 # submit the sh1 files in cluster
 for f in *sh1; do sbatch -p single $f;done 
 
-## convert sam -> bam, sort and index bam files
+
+## 2 convert sam -> bam, sort and index bam files
 
 # here is the job I submitted in cluster:
 
