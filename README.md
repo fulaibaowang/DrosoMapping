@@ -14,15 +14,14 @@ What was done so far:
 
 1. reads mappingn on fly genome via bowtie2
 
+Additionally, I created this R script [scripts/coverageplot_severalfiles_cluster.R](scripts/coverageplot_severalfiles_cluster.R) to visulaize the reads coverage of all bam files. The plots are here [data/bam reads coverage plots](data/bam reads coverage plots) (will add this later)
+
 2. convert to sorted and indexed bam files
 
+3. Pro-process the bam files following https://gatk.broadinstitute.org/hc/en-us/articles/360035535912
 
 To do list:
 
-pre-processing bam files， following https://gatk.broadinstitute.org/hc/en-us/articles/360035535912
-
 SNP calling by GATK, https://gatk.broadinstitute.org/hc/en-us/articles/360035535932-Germline-short-variant-discovery-SNPs-Indels-
-
-Visulaize bam files?
 
 toubleshoot samples with different between in R1 and R2?
