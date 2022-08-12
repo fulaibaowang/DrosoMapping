@@ -53,3 +53,46 @@ for x in *RAW.bam;
 do ~/fr_yw50/downloads/samtools1.11/bin/samtools index $x-sort.bam;
 done
 date
+
+
+## 3 variants calling with GATK
+
+# 3.1 preprocess bam files
+
+# 3.1.1 add labels of read groups using picard.jar AddOrReplaceReadGroups
+# this is required for furthur analysis
+# https://gatk.broadinstitute.org/hc/en-us/articles/5358911906459-AddOrReplaceReadGroups-Picard-
+
+cd /pfs/work7/workspace/scratch/fr_yw1014-minaproject/mapping_on_fly
+unset listA
+listA=(*.bam)
+n=${#listA[@]}
+
+for i in $(seq 0 $(($n-1))); do str=${listA[$i]}; echo -e '#!/bin/bash\n#SBATCH --nodes=1\n#SBATCH --cpus-per-task=4\n#SBATCH --time=0:39:59\n#SBATCH --output=AddOrReplaceReadGroups_out_'${listA[$i]}'.txt
+date\ncd /pfs/work7/workspace/scratch/fr_yw1014-minaproject/mapping_on_fly\n java  -Xmx3g -jar /pfs/work7/workspace/scratch/fr_yw1014-minaproject/gatk/picard.jar AddOrReplaceReadGroups I='${listA[$i]}' O='${listA[$i]}'_addlabel.bam RGID='${str:7:6}' RGLB=lib1 RGPL=ILLUMINA RGPU=unit1 RGSM='${str:7:6}'\ndate'  >  ${listA[$i]}.sh2; done
+
+# each .sh files look like this:
+
+# submit these .sh2 files simultaneously:
+for f in DE30*sh2; do sbatch -p single $f;done 
+for f in DE36*sh2; do sbatch -p single $f;done 
+for f in DE37*sh2; do sbatch -p single $f;done 
+for f in DE55*sh2; do sbatch -p single $f;done 
+for f in DE56*sh2; do sbatch -p single $f;done 
+for f in DE57*sh2; do sbatch -p single $f;done 
+for f in DE58*sh2; do sbatch -p single $f;done 
+for f in DE59*sh2; do sbatch -p single $f;done 
+for f in DE60*sh2; do sbatch -p single $f;done 
+for f in DE31*sh2; do sbatch -p single $f;done 
+
+# 3.1.2 using GATK MarkDuplicatesSpark
+unset listA
+listA=(*_addlabel.bam)
+n=${#listA[@]}
+
+for i in $(seq 0 $(($n-1))); do echo -e '#!/bin/bash\n#SBATCH --nodes=1\n#SBATCH --cpus-per-task=8\n#SBATCH --time=0:59:59\n#SBATCH --output=MarkDuplicatesSpark_out_'${listA[$i]}'.txt
+date\ncd /pfs/work7/workspace/scratch/fr_yw1014-minaproject/mapping_on_fly\n /pfs/work7/workspace/scratch/fr_yw1014-minaproject/gatk/gatk-4.2.6.1/gatk --java-options "-Xmx7G" MarkDuplicatesSpark -I '${listA[$i]}' -O '${listA[$i]}'_duplicates.bam\ndate'  >  ${listA[$i]}.sh3; done
+
+# each .sh files look like this:
+
+# submit these .sh3 files simultaneously
