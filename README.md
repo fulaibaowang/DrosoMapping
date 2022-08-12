@@ -14,7 +14,7 @@ What was done so far:
 
 1. reads mappingn on fly genome via bowtie2
 
-Additionally, I created this R script [scripts/coverageplot_severalfiles_cluster.R](scripts/coverageplot_severalfiles_cluster.R) to visulaize the reads coverage of all bam files. The plots are here [data/bam reads coverage plots](data/bam reads coverage plots) (will add this later)
+        Additionally, I created this R script [scripts/coverageplot_severalfiles_cluster.R](scripts/coverageplot_severalfiles_cluster.R) to visulaize the reads coverage of all bam files. The plots are here [data/bam_reads_coverage_plots/](data/bam_reads_coverage_plots/) (will add this later)
 
 2. convert to sorted and indexed bam files
 
