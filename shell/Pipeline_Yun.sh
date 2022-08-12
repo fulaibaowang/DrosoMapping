@@ -71,7 +71,19 @@ n=${#listA[@]}
 for i in $(seq 0 $(($n-1))); do str=${listA[$i]}; echo -e '#!/bin/bash\n#SBATCH --nodes=1\n#SBATCH --cpus-per-task=4\n#SBATCH --time=0:39:59\n#SBATCH --output=AddOrReplaceReadGroups_out_'${listA[$i]}'.txt
 date\ncd /pfs/work7/workspace/scratch/fr_yw1014-minaproject/mapping_on_fly\n java  -Xmx3g -jar /pfs/work7/workspace/scratch/fr_yw1014-minaproject/gatk/picard.jar AddOrReplaceReadGroups I='${listA[$i]}' O='${listA[$i]}'_addlabel.bam RGID='${str:7:6}' RGLB=lib1 RGPL=ILLUMINA RGPU=unit1 RGSM='${str:7:6}'\ndate'  >  ${listA[$i]}.sh2; done
 
-# each .sh files look like this:
+# each .sh2 file looks like this:
+#!/bin/bash
+#SBATCH --nodes=1
+#SBATCH --cpus-per-task=4
+#SBATCH --time=0:59:59
+#SBATCH --output=AddOrReplaceReadGroups_out_Sample_DE6176_1.fastq.gz.sam-RAW.bam-sort.bam.txt
+date
+cd /pfs/work7/workspace/scratch/fr_yw1014-minaproject/mapping_on_fly
+ java  -Xmx3g -jar /pfs/work7/workspace/scratch/fr_yw1014-minaproject/gatk/picard.jar AddOrReplaceReadGroups I=Sample_DE6176_1.fastq.gz.sam-RAW.bam-sort.bam O=Sample_DE6176_1.fastq.gz.sam-RAW.bam-sort.bam_addlabel.bam RGID=DE6176 RGLB=lib1 RGPL=ILLUMINA RGPU=unit1 RGSM=DE6176
+date
+
+# the label added is like this: RGID=DE6176 RGLB=lib1 RGPL=ILLUMINA RGPU=unit1 RGSM=DE6176
+# RGID & RGSM are sample specific; the other labels are all the same
 
 # submit these .sh2 files simultaneously:
 for f in DE30*sh2; do sbatch -p single $f;done 
@@ -93,6 +105,15 @@ n=${#listA[@]}
 for i in $(seq 0 $(($n-1))); do echo -e '#!/bin/bash\n#SBATCH --nodes=1\n#SBATCH --cpus-per-task=8\n#SBATCH --time=0:59:59\n#SBATCH --output=MarkDuplicatesSpark_out_'${listA[$i]}'.txt
 date\ncd /pfs/work7/workspace/scratch/fr_yw1014-minaproject/mapping_on_fly\n /pfs/work7/workspace/scratch/fr_yw1014-minaproject/gatk/gatk-4.2.6.1/gatk --java-options "-Xmx7G" MarkDuplicatesSpark -I '${listA[$i]}' -O '${listA[$i]}'_duplicates.bam\ndate'  >  ${listA[$i]}.sh3; done
 
-# each .sh files look like this:
+# each .sh3 file looks like this:
+#!/bin/bash
+#SBATCH --nodes=1
+#SBATCH --cpus-per-task=8
+#SBATCH --time=0:59:59
+#SBATCH --output=MarkDuplicatesSpark_out_Sample_DE6177_1.fastq.gz.sam-RAW.bam-sort.bam_addlabel.bam.txt
+date
+cd /pfs/work7/workspace/scratch/fr_yw1014-minaproject/mapping_on_fly
+ /pfs/work7/workspace/scratch/fr_yw1014-minaproject/gatk/gatk-4.2.6.1/gatk --java-options "-Xmx7G" MarkDuplicatesSpark -I Sample_DE6177_1.fastq.gz.sam-RAW.bam-sort.bam_addlabel.bam -O Sample_DE6177_1.fastq.gz.sam-RAW.bam-sort.bam_addlabel.bam_duplicates.bam
+date
 
 # submit these .sh3 files simultaneously
