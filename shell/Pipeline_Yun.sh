@@ -93,7 +93,7 @@ for f in DE57*sh2; do sbatch -p single $f;done
 for f in DE58*sh2; do sbatch -p single $f;done 
 for f in DE59*sh2; do sbatch -p single $f;done 
 for f in DE60*sh2; do sbatch -p single $f;done 
-for f in DE31*sh2; do sbatch -p single $f;done 
+for f in DE61*sh2; do sbatch -p single $f;done 
 
 # 3.2 using GATK MarkDuplicatesSpark, output files handed to Mina
 unset listA
