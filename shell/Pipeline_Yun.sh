@@ -117,3 +117,27 @@ cd /pfs/work7/workspace/scratch/fr_yw1014-minaproject/mapping_on_fly
 date
 
 # submit these .sh3 files simultaneously
+
+
+# 3.1.3 BaseRecalibrator and ApplyBQSR
+
+# do 3 additional steps for prepariation
+# a) first, index referece fasta file using samtools
+~/fr_yw50/downloads/samtools1.11/bin/samtools faidx /pfs/work7/workspace/scratch/fr_yw1014-minaproject/DrosoMapping/data/holo_dmel_6.12.fa 
+
+# b) get dict file from fasta file
+path/to/gatk --java-options "-Xmx4G" CreateSequenceDictionary -R /pfs/work7/workspace/scratch/fr_yw1014-minaproject/DrosoMapping/data/holo_dmel_6.12.fa
+
+# c)index VCF file
+path/to/gatk --java-options "-Xmx4G" IndexFeatureFile -I ../dest.all.PoolSNP.001.50.10Nov2020.ann.vcf
+
+# now, ready to do BaseRecalibrator and ApplyBQSR
+unset listA
+listA=(*_duplicates.bam)
+n=${#listA[@]}
+
+for i in $(seq 0 $(($n-1))); do echo -e '#!/bin/bash\n#SBATCH --nodes=1\n#SBATCH --cpus-per-task=8\n#SBATCH --time=03:59:59\n#SBATCH --output=BQSR_out_'${listA[$i]}'.txt
+date\ncd /pfs/work7/workspace/scratch/fr_yw1014-minaproject/mapping_on_fly\n /pfs/work7/workspace/scratch/fr_yw1014-minaproject/gatk/gatk-4.2.6.1/gatk --java-options "-Xmx7G" BaseRecalibrator -I '${listA[$i]}' -R /pfs/work7/workspace/scratch/fr_yw1014-minaproject/DrosoMapping/data/holo_dmel_6.12.fa --known-sites ../dest.all.PoolSNP.001.50.10Nov2020.ann.vcf -O '${listA[$i]}'_recal_data.table
+/pfs/work7/workspace/scratch/fr_yw1014-minaproject/gatk/gatk-4.2.6.1/gatk ApplyBQSR -R /pfs/work7/workspace/scratch/fr_yw1014-minaproject/DrosoMapping/data/holo_dmel_6.12.fa -I '${listA[$i]}' --bqsr-recal-file '${listA[$i]}'_recal_data.table -O '${listA[$i]}'_BQSR.bam\ndate'  >  ${listA[$i]}.sh4; done
+
+# submit these .sh4 files simultaneously:
