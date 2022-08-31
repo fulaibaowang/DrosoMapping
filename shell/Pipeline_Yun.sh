@@ -55,11 +55,9 @@ done
 date
 
 
-## 3 variants calling with GATK
+# 3 preprocess bam files with GATK
 
-# 3.1 preprocess bam files
-
-# 3.1.1 add labels of read groups using picard.jar AddOrReplaceReadGroups
+# 3.1 add labels of read groups using picard.jar AddOrReplaceReadGroups
 # this is required for furthur analysis
 # https://gatk.broadinstitute.org/hc/en-us/articles/5358911906459-AddOrReplaceReadGroups-Picard-
 
@@ -97,7 +95,7 @@ for f in DE59*sh2; do sbatch -p single $f;done
 for f in DE60*sh2; do sbatch -p single $f;done 
 for f in DE31*sh2; do sbatch -p single $f;done 
 
-# 3.1.2 using GATK MarkDuplicatesSpark
+# 3.2 using GATK MarkDuplicatesSpark, output files handed to Mina
 unset listA
 listA=(*_addlabel.bam)
 n=${#listA[@]}
@@ -119,9 +117,9 @@ date
 # submit these .sh3 files simultaneously
 
 
-# 3.1.3 BaseRecalibrator and ApplyBQSR
+# 3.3 BaseRecalibrator and ApplyBQSR
 
-# do 3 additional steps for prepariation
+# do 3 additional steps for prepariation, output files provided in data folder
 # a) first, index referece fasta file using samtools
 ~/fr_yw50/downloads/samtools1.11/bin/samtools faidx /pfs/work7/workspace/scratch/fr_yw1014-minaproject/DrosoMapping/data/holo_dmel_6.12.fa 
 
