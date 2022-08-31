@@ -13,7 +13,7 @@ See [shell/Pipeline_Yun.sh](shell/Pipeline_Yun.sh) for the new script
 What was done so far:
 
 0. toubleshoot samples with different reads between in R1 and R2, these samples should be redone
-    list is here[data/R1R2.different.reads.list.txt](data/R1R2.different.reads.list.txt)
+    list is here [data/R1R2.different.reads.list.txt](data/R1R2.different.reads.list.txt)
 
 1. reads mappingn on fly genome via bowtie2
 
