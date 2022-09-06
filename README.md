@@ -23,7 +23,7 @@ What was done so far:
 
 3. Pro-process the bam files following https://gatk.broadinstitute.org/hc/en-us/articles/360035535912
 
-    The bam files handed to Mina are after step 3.2 not step 3.3. Step 3.3 did not finish (yet).
+    The bam files handed to Mina are after step 3.3. One sample (3782) had error and I did not get the output bam file but it is a sample with different reads between R1 and R2 and needs to be repeat anyway.
 
 To do list:
 
