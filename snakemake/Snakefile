@@ -1,0 +1,71 @@
+# conda activate snakemake
+# cd /home/yun/PhD/Minasproject/testSnakemake
+# conda install openjdk=8 # java version has to be 8
+# mamba install -c conda-forge graphviz
+
+# define sample ID that I want to run, could be multiple SAMPLES = ["DE3035","DE3036"]
+# SAMPLES = ["DE3035","DE3036"]
+SAMPLES = ["DE3035"]
+
+rule all:
+  input:
+    expand("BQSR/{filename}-sort_addlabel.duplicates_BQSR.bam", filename=SAMPLES)
+
+rule bowtie:  
+  input:
+    R1="data/{filename}_1.fastq.gz",
+    R2="data/{filename}_2.fastq.gz"
+  output:
+    "mapped/{filename}.sam",
+  shell:
+    "bowtie2 -x holodmel -1 {input.R1} -2 {input.R2} -S {output}"
+    
+rule samtools:  
+  input:
+    rules.bowtie.output
+  output:
+    bam="mapped/{filename}.bam",
+    sortbam="sorted/{filename}-sort.bam",
+    sortbai="sorted/{filename}-sort.bam.bai"
+  shell:
+    """
+    samtools view -F 4 -bS {input} > {output.bam}
+    samtools sort {output.bam} > {output.sortbam}
+    samtools index {output.sortbam} > {output.sortbai}
+    """
+
+rule picard:
+  input:
+    bam=rules.samtools.output.sortbam,
+    bai=rules.samtools.output.sortbai
+  output:
+    "picard/{filename}-sort_addlabel.bam"
+  shell:
+    """
+    gatk --java-options '-Xmx1G' AddOrReplaceReadGroups I={input.bam} O={output} RGID={wildcards.filename} RGLB=lib1 RGPL=ILLUMINA RGPU=unit1 RGSM={wildcards.filename}
+    """
+
+# https://gatk.broadinstitute.org/hc/en-us/community/posts/360076989831-MarkDuplicatesSpark-running-but-not-sorting-creating-deduped-bam-files
+# ulimit -n 3000
+rule MarkDuplicatesSpark:
+  input:
+    rules.picard.output
+  output:
+    "MarkDuplicatesSpark/{filename}-sort_addlabel.duplicates.bam"
+  shell:
+    """
+    gatk --java-options "-Xmx4G" MarkDuplicatesSpark -I {input} -O {output}
+    """
+
+
+rule BQSR:
+  input:
+    rules.MarkDuplicatesSpark.output
+  output:
+    table="BQSR/{filename}-sort_addlabel.duplicates_recal_data.table",
+    bam="BQSR/{filename}-sort_addlabel.duplicates_BQSR.bam"
+  shell:
+    """
+    gatk --java-options "-Xmx4G" BaseRecalibrator -I {input} -R ./data/holo_dmel_6.12.fa --known-sites ./data/dest.all.PoolSNP.001.50.10Nov2020.ann.vcf -O {output.table}
+    gatk ApplyBQSR -R ./data/holo_dmel_6.12.fa -I {input} --bqsr-recal-file {output.table} -O {output.bam}
+    """

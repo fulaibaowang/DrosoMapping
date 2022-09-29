@@ -1,0 +1,6 @@
+snakemake -j 2 -np
+snakemake --dag all | dot -Tpng > dag.png
+
+
+conda activate snakemake
+conda env export > snakemake.yml
